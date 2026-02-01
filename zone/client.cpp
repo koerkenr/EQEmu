@@ -837,7 +837,7 @@ void Client::SendZoneInPackets()
 		SendAppearancePacket(AppearanceType::PVP, GetPVP(false), true, false);
 
 	//Send AA Exp packet:
-	if (GetLevel() >= 51)
+	if (GetLevel() >= 1)
 		SendAlternateAdvancementStats();
 
 	// Send exp packets

@@ -1,0 +1,30 @@
+Key modifications needed for PRODUCTION_fixed.sql:
+
+1. Add is_zero_stat to power score cache table (line ~245):
+   is_zero_stat BOOLEAN,
+   KEY idx_zero (is_zero_stat)
+
+2. Add is_zero_stat calculation in INSERT (line ~260):
+   (i.ac = 0 AND i.hp = 0 AND i.mana = 0 AND i.endur = 0 AND 
+    (i.astr + i.asta + i.adex + i.aagi + i.aint + i.awis + i.acha) = 0) AS is_zero_stat
+
+3. Add stats breakdown after power score cache (line ~280):
+   SELECT 'Items with stats' AS category, COUNT(*) FROM item_power_scores WHERE is_zero_stat = 0
+   UNION ALL
+   SELECT 'Zero-stat items' AS category, COUNT(*) FROM item_power_scores WHERE is_zero_stat = 1;
+
+4. Modify first gear INSERT to add WHERE clause (line ~470):
+   WHERE ps.is_zero_stat = 0  -- Only items WITH stats
+
+5. Add second gear INSERT for zero-stat items with selective injection
+   (insert after first gear INSERT, before mappings)
+
+6. Keep bag generation unchanged
+
+Class bitmasks for selective injection:
+- Tanks: 21 (WAR=1 + PAL=4 + SHD=16)
+- Melee DPS: 49608 (RNG=8 + MNK=64 + BRD=128 + ROG=256 + BST=16384 + BER=32768)
+- All melee: 49629 (tanks + melee dps)
+- INT casters: 15360 (NEC=1024 + WIZ=2048 + MAG=4096 + ENC=8192)
+- WIS casters: 546 (CLR=2 + DRU=32 + SHM=512)
+- All casters: 15906

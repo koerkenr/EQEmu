@@ -69,3 +69,6 @@ compile_flags.txt
 # CMake Files
 cmake-build-relwithdebinfo/*
 skill-caps.diff
+
+# Working directories (development/testing files)
+# 01_Working/ - Removed to allow tier loot system files
